@@ -6,7 +6,7 @@ Buffer: class {
     data: String
 
     init: func {
-        this(128)
+        init(128)
     }
 
     init: func ~withCapa (=capacity) {
