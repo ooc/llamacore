@@ -1,0 +1,12 @@
+llamacore
+=========
+This is the standard SDK of ooc.
+Includes your basic components such as...
+
+    + File I/O
+    + Threading
+    + Data Structures
+    + Networking
+    + And much more!
+
+See http://ooc-lang.org/docs/modindex.html for more details.
