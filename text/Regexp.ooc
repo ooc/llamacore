@@ -50,7 +50,7 @@ Regexp: class {
         :return: new regular expression object if successful, null if error occured.
     */
     compile: static func ~withOptions(pattern: String, options: Int) -> This {
-        p := Pcre compile(pattern, options, errorMsg& as const Char**, errorOffset&, null)
+        p := Pcre compile(pattern, options, Regexp errorMsg& as const Char**, Regexp errorOffset&, null)
         if(!p) {
             //TODO: once true exceptions work, throw an exception instead
             return null
@@ -94,6 +94,20 @@ Match: class extends Iterable<String> {
     ovector: Int*
 
     init: func(=regexp, =substringCount, =subject, =ovector) {}
+
+    /**
+        Returns the starting position of the match group by index.
+    */
+    start: func ~byIndex(index: Int) -> Int {
+        (ovector + (index * 2))@
+    }
+
+    /**
+        Returns the ending position of the match group by index.
+    */
+    end: func ~byIndex(index: Int) -> Int {
+        (ovector + (index * 2) + 1)@
+    }
 
     /**
         Returns a subgroup of the matched string by index.

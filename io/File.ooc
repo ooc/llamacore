@@ -97,8 +97,8 @@ File: abstract class {
      * name() will return 'bluetooth'
      */
     name: func -> String {
-        trimmed := path trim(separator)
-        idx := trimmed lastIndexOf(separator)
+        trimmed := path trim(This separator)
+        idx := trimmed lastIndexOf(This separator)
         if(idx == -1) return trimmed
         return trimmed substring(idx + 1)
     }
@@ -120,7 +120,7 @@ File: abstract class {
      * root directory.
      */
     parentName: func -> String {
-        idx := path lastIndexOf(separator)
+        idx := path lastIndexOf(This separator)
         if(idx == -1) return null
         return path substring(0, idx)
     }

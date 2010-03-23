@@ -154,7 +154,7 @@ version(unix || apple) {
          * The absolute path, e.g. "my/dir" => "/current/directory/my/dir"
          */
         getAbsolutePath: func -> String {
-            actualPath := String new(MAX_PATH_LENGTH + 1)
+            actualPath := String new(This MAX_PATH_LENGTH + 1)
             return realpath(path, actualPath)
         }
 
