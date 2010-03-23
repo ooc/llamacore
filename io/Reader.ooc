@@ -24,6 +24,22 @@ Reader: abstract class {
         readUntil('\n') trimRight('\r')
     }
 
+    peek: func -> Char {
+        c := read()
+        rewind(1)
+        return c
+    }
+
+    skipWhile: func (unwanted: Char) {
+        while(hasNext()) {
+            c := read()
+            if(c != unwanted) {
+                rewind(1)
+                break
+            }
+        }
+    }
+
     hasNext: abstract func -> Bool
     rewind: abstract func(offset: Int)
     mark: abstract func -> Long
