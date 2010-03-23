@@ -129,13 +129,13 @@ strtof:  extern func (Char*, Pointer)      -> Float
 strtod:  extern func (Char*, Pointer)      -> Double
 strtold: extern func (Char*, Pointer)      -> LDouble
 
-strlen:  extern func (Char*) -> SizeT
+strlen:  extern func (Char*) -> Int
 
 String: cover from Char* {
 
     /** Create a new string exactly *length* characters long (without the nullbyte).
         The contents of the string are undefined. */
-    new: static func~withLength (length: SizeT) -> This {
+    new: static func~withLength (length: Int) -> This {
         result : This = gc_malloc(length + 1)
         result[length] = '\0'
         result
@@ -150,8 +150,8 @@ String: cover from Char* {
 
     /** compare *length* characters of *this* with *other*, starting at *start*.
         Return true if the two strings are equal, return false if they are not. */
-    compare: func (other: This, start, length: SizeT) -> Bool {
-        for(i: SizeT in 0..length) {
+    compare: func (other: This, start, length: Int) -> Bool {
+        for(i: Int in 0..length) {
             if(this[start + i] != other[i]) {
                 return false
             }
@@ -161,7 +161,7 @@ String: cover from Char* {
 
     /** compare *this* with *other*, starting at *start*. The count of compared
         characters is determined by *other*'s length. */
-    compare: func ~implicitLength (other: This, start: SizeT) -> Bool {
+    compare: func ~implicitLength (other: This, start: Int) -> Bool {
         compare(other, start, other length())
     }
 
@@ -171,7 +171,7 @@ String: cover from Char* {
     }
 
     /** return the string's length, excluding the null byte. */
-    length: extern(strlen) func -> SizeT
+    length: extern(strlen) func -> Int
 
     /** return true if *other* and *this* are equal. This also returns false if either
         of these two is ``null``. */
@@ -182,7 +182,7 @@ String: cover from Char* {
         if (this length() != other length()) {
             return false
         }
-        for (i : SizeT in 0..other length()) {
+        for (i : Int in 0..other length()) {
             if (this[i] != other[i]) {
                 return false
             }
@@ -223,7 +223,7 @@ String: cover from Char* {
     /** return true if the first characters of *this* are equal to *s*. */
     startsWith: func(s: String) -> Bool {
         if (this length() < s length()) return false
-        for (i: SizeT in 0..s length()) {
+        for (i: Int in 0..s length()) {
             if(this[i] != s[i]) return false
         }
         return true
@@ -236,11 +236,11 @@ String: cover from Char* {
 
     /** return true if the last characters of *this* are equal to *s*. */
     endsWith: func(s: String) -> Bool {
-        l1 = this length() : SizeT
-        l2 = s length() : SizeT
+        l1 = this length() : Int
+        l2 = s length() : Int
         if(l1 < l2) return false
-        offset = (l1 - l2) : SizeT
-        for (i: SizeT in 0..l2) {
+        offset = (l1 - l2) : Int
+        for (i: Int in 0..l2) {
             if(this[i + offset] != s[i]) {
                 return false
             }
@@ -399,7 +399,7 @@ String: cover from Char* {
 
     /** return the index of the last character of *this*. If *this* is empty,
         -1 is returned. */
-    lastIndex: func -> SizeT {
+    lastIndex: func -> Int {
         return length() - 1
     }
 
@@ -424,15 +424,15 @@ String: cover from Char* {
 
     /** return a substring of *this* only containing the characters
         in the range ``start..length``.  */
-    substring: func ~tillEnd (start: SizeT) -> This {
-        len = this length() : SizeT
+    substring: func ~tillEnd (start: Int) -> This {
+        len := length()
 
         if(start > len) {
             Exception new(This, "String.substring: out of bounds: length = %zd, start = %zd\n" format(len, start)) throw()
             return null
         }
 
-        diff = (len - start) : SizeT
+        diff = (len - start) : Int
         sub := gc_malloc(diff + 1) as This
         memcpy(sub, this as Char* + start, diff)
         sub[diff] = '\0'
@@ -441,17 +441,21 @@ String: cover from Char* {
 
     /** return a substring of *this* only containing the characters in the
         range ``start..end``. */
-    substring: func (start: SizeT, end: SizeT) -> This {
-        len = this length() : SizeT
+    substring: func (start: Int, end: Int) -> This {
+        len = this length() : Int
 
         if(start == end) return ""
+
+        if(end < 0) {
+            end = len + end + 1
+        }
 
         if(start > len || start > end || end > len) {
             Exception new(This, "String.substring: out of bounds: length = %zd, start = %zd, end = %zd\n" format(len, start, end)) throw()
             return null
         }
 
-        diff = (end - start) : SizeT
+        diff = (end - start) : Int
         sub := gc_malloc(diff + 1) as This
         sub[diff] = 0
         memcpy(sub, this as Char* + start, diff)
@@ -468,7 +472,7 @@ String: cover from Char* {
         }
 
         result := gc_malloc(len + 1) as This
-        for (i: SizeT in 0..len) {
+        for (i: Int in 0..len) {
             result[i] = this[(len-1)-i]
         }
         result[len] = 0
@@ -527,9 +531,9 @@ String: cover from Char* {
     }
 
     /** return the number of *what*'s occurences in *this*. */
-    count: func ~char (what: Char) -> SizeT {
+    count: func ~char (what: Char) -> Int {
         count := 0
-        for(i: SizeT in 0..length()) {
+        for(i: Int in 0..length()) {
             if(this[i] == what)
                 count += 1
         }
@@ -537,7 +541,7 @@ String: cover from Char* {
     }
 
     /** return the number of *what*'s non-overlapping occurences in *this*. */
-    count: func ~string (what: String) -> SizeT {
+    count: func ~string (what: String) -> Int {
         length := this length()
         whatLength := what length()
         count := 0
@@ -572,7 +576,7 @@ String: cover from Char* {
         length := length()
         oldieLength := oldie length()
         buffer := Buffer new(length)
-        i: SizeT = 0
+        i: Int = 0
         while(i < length) {
             if(compare(oldie, i, oldieLength)) {
                 /* found oldie! */
@@ -622,7 +626,7 @@ String: cover from Char* {
     }
 
     /** return the character at position #*index* (starting at 0) */
-    charAt: func(index: SizeT) -> Char {
+    charAt: func(index: Int) -> Char {
         this as Char* [index]
     }
 
@@ -666,12 +670,16 @@ operator != (str1: String, str2: String) -> Bool {
     return !str1 equals(str2)
 }
 
-operator [] (string: String, index: SizeT) -> Char {
+operator [] (string: String, index: Int) -> Char {
     string charAt(index)
 }
 
 operator [] (string: String, range: Range) -> String {
     string substring(range min, range max)
+}
+
+operator [] (string: String, start, length: Int) -> String {
+    string substring(start, start + length)
 }
 
 operator * (str: String, count: Int) -> String {
