@@ -16,11 +16,19 @@ MultiMap: class <K, V> extends HashMap<K, V> {
         super(capacity)
     }
     
+    get: func ~_super (key: K) -> K {
+        super(key)
+    }
+    
+    put: func ~_super (key: K, value: V) -> Bool {
+        super(key, value)
+    }
+    
     put: func (key: K, value: V) -> Bool {
-        already := super(key) as Object
+        already := get~_super(key) as Object
         if(already == null) {
             // First of the kind - just put it
-            super(key, value)
+            put~_super(key, value)
         } else if(already instanceOf(List)) {
             // Already at least two - append to the list
             list := already as List<V>
@@ -30,13 +38,13 @@ MultiMap: class <K, V> extends HashMap<K, V> {
             list := ArrayList<V> new()
             list add(already)
             list add(value)
-            super(key, list)
+            put~_super(key, list)
         }
         return true
     }
     
     remove: func (key: K) -> Bool {
-        already := super(key) as Object
+        already := get~_super(key) as Object
         if(already == null) {
             // Doesn't contain it
             return false
@@ -46,7 +54,7 @@ MultiMap: class <K, V> extends HashMap<K, V> {
             list removeAt(list lastIndex())
             if(list size() == 1) {
                 // Only one left - turn the list into a single element
-                super(key, list first())
+                put~_super(key, list first())
             }
         } else {
             // Only one - remove it
@@ -55,7 +63,7 @@ MultiMap: class <K, V> extends HashMap<K, V> {
     }
     
     getAll: func (key: K) -> V {
-        super(key)
+        get~_super(key)
     }
     
     get: func (key: K) -> V {
