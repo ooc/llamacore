@@ -23,11 +23,11 @@ OrderedMultiMap: class <K, V> extends MultiMap<K, V> {
         if(!_containsKey(key)) {
             orderedKeys add(key)
         }
-        return super put(key, value)
+        return super(key, value)
     }
     
     remove: func (key: K) -> Bool {
-        super remove(key)
+        super(key)
         // in a MultiMap, the same key can have several values
         // we only remove the key from the list if there are no values left
         if(!contains(key)) {

@@ -6,7 +6,7 @@ import HashMap, ArrayList, List
 MultiMap: class <K, V> extends HashMap<K, V> {
 
     init: func ~multiMap {
-        this(10)
+        init(10)
     }
     
     init: func ~multiMapWithCapa(.capacity) {
@@ -17,10 +17,10 @@ MultiMap: class <K, V> extends HashMap<K, V> {
     }
     
     put: func (key: K, value: V) -> Bool {
-        already := super get(key) as Object
+        already := super(key) as Object
         if(already == null) {
             // First of the kind - just put it
-            super put(key, value)
+            super(key, value)
         } else if(already instanceOf(List)) {
             // Already at least two - append to the list
             list := already as List<V>
@@ -30,13 +30,13 @@ MultiMap: class <K, V> extends HashMap<K, V> {
             list := ArrayList<V> new()
             list add(already)
             list add(value)
-            super put(key, list)
+            super(key, list)
         }
         return true
     }
     
     remove: func (key: K) -> Bool {
-        already := super get(key) as Object
+        already := super(key) as Object
         if(already == null) {
             // Doesn't contain it
             return false
@@ -46,20 +46,20 @@ MultiMap: class <K, V> extends HashMap<K, V> {
             list removeAt(list lastIndex())
             if(list size() == 1) {
                 // Only one left - turn the list into a single element
-                super put(key, list first())
+                super(key, list first())
             }
         } else {
             // Only one - remove it
-            return super remove(key)
+            return super(key)
         }
     }
     
     getAll: func (key: K) -> V {
-        super get(key)
+        super(key)
     }
     
     get: func (key: K) -> V {
-        val := super get(key) as Object
+        val := super(key) as Object
         if(val == null) {
             return val
         } else if(val instanceOf(List)) {
