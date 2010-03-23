@@ -96,6 +96,20 @@ Match: class extends Iterable<String> {
     init: func(=regexp, =substringCount, =subject, =ovector) {}
 
     /**
+        Returns the starting position of the match group by index.
+    */
+    start: func ~byIndex(index: Int) -> Int {
+        (ovector + (index * 2))@
+    }
+
+    /**
+        Returns the ending position of the match group by index.
+    */
+    end: func ~byIndex(index: Int) -> Int {
+        (ovector + (index * 2) + 1)@
+    }
+
+    /**
         Returns a subgroup of the matched string by index.
     */
     group: func ~byIndex(index: Int) -> String {
