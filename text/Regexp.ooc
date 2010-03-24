@@ -89,11 +89,11 @@ Regexp: class {
 */
 Match: class extends Iterable<String> {
     regexp: Regexp
-    substringCount: Int
+    groupCount: Int
     subject: String
     ovector: Int*
 
-    init: func(=regexp, =substringCount, =subject, =ovector) {}
+    init: func(=regexp, =groupCount, =subject, =ovector) {}
 
     /**
         Returns the starting position of the match group by index.
@@ -113,8 +113,8 @@ Match: class extends Iterable<String> {
         Returns a subgroup of the matched string by index.
     */
     group: func ~byIndex(index: Int) -> String {
-        if(index >= substringCount) {
-            Exception new("Invalid substring index: %d" format(index)) throw()
+        if(index >= groupCount) {
+            Exception new("Invalid group index: %d" format(index)) throw()
         }
 
         offset := index * 2
@@ -126,7 +126,7 @@ Match: class extends Iterable<String> {
     */
     group: func ~byName(name: String) -> String {
         number := regexp pcre getStringNumber(name)
-        if(number < -1) Exception new("Invalid substring name: %s" format(name)) throw()
+        if(number < -1) Exception new("Invalid group name: %s" format(name)) throw()
         return group(number)
     }
 
