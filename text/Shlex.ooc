@@ -92,6 +92,7 @@ Shlex: class {
         }
     }
 
+    /** Split the string following the shell lexer rules and return the splitted parts. */
     split: static func (s: String) -> ArrayList<String> {
         shlex := This new()
         shlex feed(s)
