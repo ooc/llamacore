@@ -16,6 +16,7 @@ Pointer: cover from void* {
  * character and pointer types
  */
 Char: cover from char {
+    
     /** check for an alphanumeric character */
     isAlphaNumeric: func -> Bool {
         isAlpha() || isDigit()
@@ -112,6 +113,7 @@ Char: cover from char {
     println: func {
         printf("%c\n", this)
     }
+    
 }
 
 SChar: cover from signed char extends Char
@@ -136,7 +138,7 @@ String: cover from Char* {
     /** Create a new string exactly *length* characters long (without the nullbyte).
         The contents of the string are undefined. */
     new: static func~withLength (length: Int) -> This {
-        result : This = gc_malloc(length + 1)
+        result := gc_malloc(length + 1) as This
         result[length] = '\0'
         result
     }
@@ -221,7 +223,7 @@ String: cover from Char* {
     isEmpty: func -> Bool { (this == null) || (this[0] == 0) }
 
     /** return true if the first characters of *this* are equal to *s*. */
-    startsWith: func(s: String) -> Bool {
+    startsWith: func(s: This) -> Bool {
         if (this length() < s length()) return false
         for (i: Int in 0..s length()) {
             if(this[i] != s[i]) return false
@@ -313,7 +315,7 @@ String: cover from Char* {
 
     /** return a copy of *this* with all characters contained by *s* stripped
         at both ends. */
-    trim: func ~string (s: String) -> This {
+    trim: func ~string (s: This) -> This {
         if(length() == 0) return this
 
         start := 0
@@ -431,17 +433,17 @@ String: cover from Char* {
             Exception new(This, "String.substring: out of bounds: length = %zd, start = %zd\n" format(len, start)) throw()
             return null
         }
-
-        diff = (len - start) : Int
-        sub := gc_malloc(diff + 1) as This
-        memcpy(sub, this as Char* + start, diff)
+        
+        diff = (len - start) : SizeT
+        sub := This new(diff)
+        memcpy(sub, (this as Char*) + start, diff)
         sub[diff] = '\0'
         return sub
     }
 
     /** return a substring of *this* only containing the characters in the
         range ``start..end``. */
-    substring: func (start: Int, end: Int) -> This {
+    substring: func (start, end: Int) -> This {
         len = this length() : Int
 
         if(start == end) return ""
@@ -456,9 +458,9 @@ String: cover from Char* {
         }
 
         diff = (end - start) : Int
-        sub := gc_malloc(diff + 1) as This
+        sub := This new(diff)
         sub[diff] = 0
-        memcpy(sub, this as Char* + start, diff)
+        memcpy(sub, (this as Char*) + start, diff)
         return sub
     }
 
@@ -470,9 +472,9 @@ String: cover from Char* {
         if (!len) {
             return null
         }
-
-        result := gc_malloc(len + 1) as This
-        for (i: Int in 0..len) {
+        
+        result := This new(len + 1)
+        for (i: SizeT in 0..len) {
             result[i] = this[(len-1)-i]
         }
         result[len] = 0
@@ -505,7 +507,7 @@ String: cover from Char* {
     /** return a copy of *this*. */
     clone: func -> This {
         length := length()
-        copy := new(length)
+        copy := This new(length)
         memcpy(copy, this, length + 1)
         return copy
     }
@@ -514,19 +516,19 @@ String: cover from Char* {
     append: func(other: This) -> This {
         length := length()
         rlength := other length()
-        copy := gc_malloc(length + rlength + 1) as Char*
+        copy := This new(length + rlength) as Char*
         memcpy(copy, this, length)
-        memcpy(copy as Char* + length, other, rlength + 1) // copy the final '\0'
+        memcpy(copy + length, other, rlength + 1) // copy the final '\0'
         return copy
     }
 
     /** return a string containing *this* followed by *other*. */
     append: func ~char (other: Char) -> This {
         length := length()
-        copy := gc_malloc(length + 2) as Char*
+        copy := This new(length + 1) as Char*
         memcpy(copy, this, length)
-        copy as Char* [length] = other
-        copy as Char* [length + 1] = '\0'
+        copy[length] = other
+        copy[length + 1] = '\0'
         return copy
     }
 
@@ -592,55 +594,59 @@ String: cover from Char* {
     }
 
     /** return a new string containg *other* followed by *this*. */
-    prepend: func (other: String) -> This {
+    prepend: func (other: This) -> This {
         other append(this)
     }
 
     /** return a new string containing *other* followed by *this*. */
     prepend: func ~char (other: Char) -> This {
         length := length()
-        copy := gc_malloc(length + 2) as Char*
-        copy as Char * [0] = other
+        copy := This new(length + 1) as Char*
+        copy[0] = other
         memcpy(copy + 1, this, length)
         return copy
     }
 
     /** return a new string with all characters lowercased (if possible). */
     toLower: func -> This {
-        copy := clone()
         length := length()
+        copy := This new(length) as Char*
         for(i in 0..length) {
-            copy[i] = copy[i] toLower()
+            copy[i] = this[i] as Char toLower()
         }
         return copy
     }
 
     /** return a new string with all characters uppercased (if possible). */
     toUpper: func -> This {
-        copy := clone()
         length := length()
+        copy := This new(length) as Char*
         for(i in 0..length) {
-            copy[i] = copy[i] toUpper()
+            copy[i] = this[i] as Char toUpper()
         }
         return copy
     }
 
     /** return the character at position #*index* (starting at 0) */
-    charAt: func(index: Int) -> Char {
-        this as Char* [index]
+    charAt: func(index: SizeT) -> Char {
+        if(index < 0 || index > length()) {
+            Exception new(This, "Accessing a String out of bounds index = %d, length = %d!" format(index, length())) throw()
+        }
+        (this as Char*)[index]
     }
-
+    
     /** return a string formatted using *this* as template. */
-    format: func (...) -> String {
+    format: func (...) -> This {
         list:VaList
 
         va_start(list, this)
-        length := vsnprintf(null, 0, this, list) + 1
-        output: String = gc_malloc(length)
+        
+        length := vsnprintf(null, 0, this, list)
+        output := This new(length)
         va_end(list)
 
         va_start(list, this)
-        vsnprintf(output, length, this, list)
+        vsnprintf(output, length + 1, this, list)
         va_end(list)
 
         return output
@@ -1060,9 +1066,9 @@ StringIterator: class <T> extends Iterator<T> {
 
     i := 0
     str: String
-
-    init: func (=str) {}
-
+    
+    init: func ~withStr (=str) {}
+    
     hasNext: func -> Bool {
         i < str length()
     }
