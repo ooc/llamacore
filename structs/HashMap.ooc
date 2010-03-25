@@ -215,7 +215,7 @@ HashMap: class <K, V> extends Iterable<V> {
     get: func (key: K) -> V {
         entry := getEntry(key)
         if (entry) {
-	    return entry value
+            return entry value
         }
         return null
     }

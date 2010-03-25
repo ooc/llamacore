@@ -116,27 +116,30 @@ version(unix || apple) {
         }
 
         /**
-         * @return the time of last access
+         * @return the time of last access, or -1 if it doesn't exist
          */
         lastAccessed: func -> Long {
+            if(!exists()) return -1
             stat: FileStat
             lstat(path, stat&)
             return stat st_atime
         }
 
         /**
-         * @return the time of last modification
+         * @return the time of last modification, or -1 if it doesn't exist
          */
         lastModified: func -> Long {
+            if(!exists()) return -1
             stat: FileStat
             lstat(path, stat&)
             return stat st_mtime
         }
 
         /**
-         * @return the time of creation
+         * @return the time of creation, or -1 if it doesn't exist
          */
         created: func -> Long {
+            if(!exists()) return -1
             stat: FileStat
             lstat(path, stat&)
             return stat st_ctime
