@@ -42,8 +42,8 @@ Random: class {
     
     // Code taken from "http://software.intel.com/en-us/articles/fast-random-number-generator-on-the-intel-pentiumr-4-processor/"
     fastRandom: static func() -> Int {
-        state = 214013 * state+ 2531011
-        return (state>>16) & 0x7fff
+        This state = 214013 * This state+ 2531011
+        return (This state>>16) & 0x7fff
     }
 
     fastRandInt: static func(start, end: Int) -> Int {
