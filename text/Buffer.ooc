@@ -121,7 +121,7 @@ BufferReader: class extends Reader {
     }
 
     read: func(chars: String, offset: Int, count: Int) -> SizeT {
-        buffer get(chars, offset, count)
+        buffer get(chars as Char* + offset, marker, count)
         marker += count
         return count
     }
