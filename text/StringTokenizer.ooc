@@ -25,7 +25,7 @@ StringTokenizer: class extends Iterable<String> {
         empties = false
     }
     
-    iterator: func -> Iterator<String> { StringTokenizerIterator new(this) }
+    iterator: func -> Iterator<String> { StringTokenizerIterator<String> new(this) }
     
     hasNext: func -> Bool { index < length }
     
