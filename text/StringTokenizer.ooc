@@ -7,15 +7,15 @@ StringTokenizer: class extends Iterable<String> {
     empties: Bool
 
     init: func~withCharWithoutMaxSplits(input: String, delim: Char) {
-        this~withChar(input, delim, -1)
+        init~withChar(input, delim, -1)
     }
 
     init: func~withStringWithoutMaxSplits(input: String, delim: String) {
-        this~withString(input, delim, -1)
+        init~withString(input, delim, -1)
     }
 
     init: func~withChar(input: String, delim: Char, maxSplits: Int) {
-        this~withString(input, String new(delim), maxSplits)
+        init~withString(input, String new(delim), maxSplits)
     }
     
     init: func~withString(=input, =delim, =maxSplits) {
