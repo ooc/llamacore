@@ -39,11 +39,11 @@ File: abstract class {
     }
 
     new: static func ~parentFile(parent: File, .path) -> This {
-        return new(parent path + File separator + path)
+        return new(parent path + This separator + path)
     }
 
     new: static func ~parentPath(parent: String, .path) -> This {
-        return new(parent + File separator + path)
+        return new(parent + This separator + path)
     }
 
     /**
@@ -257,7 +257,7 @@ File: abstract class {
      * :param name: The name of the child, relatively to this path
      */
     getChild: func (name: String) -> This {
-        new(this path + File separator + name)
+        new(this path + This separator + name)
     }
 
     /**
