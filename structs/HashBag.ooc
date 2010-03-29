@@ -2,27 +2,27 @@ import structs/HashMap
 
 HashBag: class {
 
-    myMap: HashMap<Cell<Pointer>>
+    myMap: HashMap<String, Cell<Pointer>>
     
     init: func {
         init ~withCapacity(10)
     }
 
     init: func ~withCapacity(capacity: Int) {
-        myMap = HashMap<Cell<Pointer>> new(capacity)
+        myMap = HashMap<String, Cell<Pointer>> new(capacity)
     }
 
     get: func <T> (key: String, T: Class) -> T {
-        return getEntry(key, T) value
+        return getEntry(key, T) value as T
     }
 
-    getEntry: func <T> (key: String, T: Class) -> HashEntry<Pointer> {
-        entry := myMap getEntry(key)
+    getEntry: func <V> (key: String, V: Class) -> HashEntry<String, Pointer> {
+        entry := myMap getEntry(key) as HashEntry<String, Cell<V>>
         if (entry) {
-            cell := entry value as Cell<T>
-            return HashEntry<T> new(key, cell val)
+            cell := entry value as Cell<V>
+            return HashEntry<String, V> new(key, cell val)
         }
-        return HashEntry<T> new(key, None new())
+        return HashEntry<String, V> new(key, None new())
     }
 
     put: func <T>(key: String, value: T) -> Bool {

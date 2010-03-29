@@ -14,6 +14,7 @@ include stdio
 
 import structs/ArrayList
 import FileReader, FileWriter
+import text/Buffer
 import native/[FileWin32, FileUnix]
 
 File: abstract class {
@@ -237,6 +238,17 @@ File: abstract class {
         }
         dst close()
         src close()
+    }
+    
+    read: func -> String {
+        fR := FileReader new(this)
+        bW := BufferWriter new() .write(fR) .close()
+        fR close()
+        bW buffer toString()
+    }
+    
+    write: func (str: String) {
+        FileWriter new(this) write(BufferReader new(Buffer new(str))) .close()
     }
 
     /**
