@@ -24,10 +24,11 @@ genericKeyEquals: func <K> (k1, k2: K) -> Bool {
     memcmp(k1, k2, K size) == 0
 }
 
+// TODO: Should move the two hash functions to a crypto/Hash module or something.
+
 /**
  * Port of Austin Appleby's Murmur Hash implementation
  * http://murmurhash.googlepages.com/
- * TODO: Use this to hash not just strings, but any type of object
  * @param key The key to hash
  * @param seed The seed value
  */
@@ -59,17 +60,11 @@ murmurHash: func <K> (keyTagazok: K) -> UInt {
 
     t := 0
 
-    /*
     match(len) {
         case 3 => h ^= data[2] << 16
         case 2 => h ^= data[1] << 8
         case 1 => h ^= data[0]
     }
-    */
-    
-    if(len == 3) h ^= data[2] << 16
-    if(len == 2) h ^= data[1] << 8
-    if(len == 1) h ^= data[0]
     
     t *= m; t ^= t >> r; t *= m; h *= m; h ^= t;
     l *= m; l ^= l >> r; l *= m; h *= m; h ^= l;
