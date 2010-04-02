@@ -581,12 +581,12 @@ String: cover from Char* {
         i: Int = 0
         while(i < length) {
             if(compare(oldie, i, oldieLength)) {
-                /* found oldie! */
+                // found oldie!
                 buffer append(kiddo)
                 i += oldieLength
             } else {
-                // TODO optimize: don't appepnd char by char, append chunk by chunk.
-                buffer append(this as Char* [i])
+                // TODO optimize: don't append char by char, append chunk by chunk.
+                buffer append((this as Char*)[i])
                 i += 1
             }
         }
@@ -803,6 +803,13 @@ operator as (value: UShort) -> String {
     value toString()
 }
 
+INT_MIN,    INT_MAX  : extern Int
+UINT_MAX 			 : extern UInt
+LONG_MIN,  LONG_MAX  : extern Long
+ULONG_MAX			 : extern ULong
+LLONG_MIN, LLONG_MAX : extern LLong
+ULLONG_MAX			 : extern ULLong
+
 /**
  * fixed-size integer types
  */
@@ -877,8 +884,6 @@ operator as (value: Bool) -> String {
 /**
  * real types
  */
-Float: cover from float extends LDouble
-Double: cover from double extends LDouble
 LDouble: cover from long double {
 
     toString: func -> String {
@@ -892,6 +897,8 @@ LDouble: cover from long double {
     }
 
 }
+Float: cover from float extends LDouble
+Double: cover from double extends LDouble
 
 operator as (value: Float) -> String {
     value toString()
@@ -905,14 +912,9 @@ operator as (value: LDouble) -> String {
     value toString()
 }
 
-DBL_MAX: extern static const Double
-DBL_MIN: extern static const Double
-
-FLT_MAX: extern static const Float
-FLT_MIN: extern static const Float
-
-LDBL_MAX: extern static const LDouble
-LDBL_MIN: extern static const LDouble
+DBL_MIN,  DBL_MAX : extern Double
+FLT_MIN,  FLT_MAX : extern Float
+LDBL_MIN, LDBL_MAX: extern LDouble
 
 /**
  * custom types
