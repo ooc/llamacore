@@ -803,12 +803,17 @@ operator as (value: UShort) -> String {
     value toString()
 }
 
+/*
 INT_MIN,    INT_MAX  : extern Int
 UINT_MAX 			 : extern UInt
 LONG_MIN,  LONG_MAX  : extern Long
 ULONG_MAX			 : extern ULong
 LLONG_MIN, LLONG_MAX : extern LLong
 ULLONG_MAX			 : extern ULLong
+*/
+
+INT_MAX := 2147483647
+INT_MIN := -INT_MAX - 1
 
 /**
  * fixed-size integer types
