@@ -7,7 +7,7 @@ version (!windows) {
     unsetenv: extern func (key: String) -> Int
 }
 version (windows) {
-    putenv: extern proto func (str: String) -> Int
+    putenv: extern func (str: String) -> Int
 }
 
 Env: class {
@@ -40,7 +40,7 @@ Env: class {
         }
         return -1
     }
-    
+
     /* clearenv is not used since it's not part of the POSIX-2001 standard
      * and not available, for example, on OSX */
 }

@@ -20,7 +20,7 @@ version(unix || apple) {
     File separator = '/'
     File pathDelimiter = ':'
 
-    _getcwd: extern (getcwd) func(buf: String, size: SizeT) -> String
+    _getcwd: extern(getcwd) unmangled func(buf: String, size: SizeT) -> String
 
     ModeT: cover from mode_t
     FileStat: cover from struct stat {
